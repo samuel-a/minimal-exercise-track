@@ -5,15 +5,17 @@ router.get("/", function(req, res, next) {
     res.send("API is working properly.")
 })
 var pgp = require('pg-promise')(/* options */)
+require('dotenv').config()
 
 
 const connection = {
-    host: 'localhost',
-    port: 5432,
-    database: 'logger_base',
-    user: 'based-god',
-    password: 'simp'
+    host: process.env.pghost,
+    port: process.env.pgport,
+    database: process.env.pgdatabase,
+    user: process.env.pguser,
+    password: process.env.pgpassword
 }
+
 
 var db = pgp(connection)
 db.one('SELECT $1 AS value', 123)
