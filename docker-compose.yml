@@ -1,8 +1,28 @@
 version: '3'
 services:
-    webapp:
+    client:
         image: nginx
         volumes:
             - ./client/dist/:/usr/share/nginx/html
         ports:
             - "8080:80"
+    api:
+        build: ./api/
+        environment:
+            DATABASE_URL: postgres://user:pass@postgres:5432/db
+        ports:
+            - "3000:3000"
+        links:
+            - pg_db:postgres
+        depends_on:
+            - pg_db
+    pg_db:
+        image: postgres
+        ports:
+            - "5432:5432"
+        restart: always
+        environment:
+            POSTGRES_DB: db
+            POSTGRES_PASSWORD: pass 
+            POSTGRES_USER: user
+

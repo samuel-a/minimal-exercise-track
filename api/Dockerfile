@@ -1,8 +1,8 @@
 # Specify a base image
 FROM node:12.13.0-alpine AS alpine
-WORKDIR /app
+WORKDIR /api
 # Install dependencies
-COPY package.json .
+COPY package.json ./
 RUN npm install 
 COPY . .
 # Default command
