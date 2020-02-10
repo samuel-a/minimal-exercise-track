@@ -21,7 +21,7 @@ class DiaryView extends React.Component {
 	}
 
 	callAPI(){
-		fetch('http://localhost:3000/testAPI')
+		fetch('http://localhost:3000/API')
 			.then(res=>res.text())
 			.then(res => this.setState({apiResponse: res}))
 	}

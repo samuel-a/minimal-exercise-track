@@ -11,10 +11,11 @@ This is a simple gym exercise tracking web-app with a dockerized postgres backen
 
 ## Executing
 either run the `run.sh` file or run
-	npm run dist --prefix ./client/ && docker-compose build && docker-compose run
+	npm install --prefix ./client && npm run dist --prefix ./client/ && docker-compose build && docker-compose run
 
 note: the client content must at the moment be manually updated by running `npm run dist`
 
+the client side interface can be accessed at `localhost:8080`
 ## TODO :
 - Automate client building through a Dockerfile
 - Remove hardcoding for API access from client/src/.../App.js 

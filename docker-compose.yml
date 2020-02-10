@@ -9,11 +9,11 @@ services:
     api:
         build: ./api/
         environment:
-            DATABASE_URL: postgres://user:pass@postgres:5432/db
+            DATABASE_URL: postgres://user:pass@pg_db:5432/db
         ports:
             - "3000:3000"
         links:
-            - pg_db:postgres
+            - pg_db
         depends_on:
             - pg_db
     pg_db:
