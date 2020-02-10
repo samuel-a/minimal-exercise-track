@@ -17,6 +17,7 @@ note: the client content must at the moment be manually updated by running `npm 
 
 the client side interface can be accessed at `localhost:8080`
 ## TODO :
+- load and save programs in the manage tab
 - Automate client building through a Dockerfile
 - Remove hardcoding for API access from client/src/.../App.js 
 - add tests

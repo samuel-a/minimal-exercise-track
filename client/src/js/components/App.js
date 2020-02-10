@@ -46,10 +46,6 @@ class DiaryView extends React.Component {
 					<ProgramManagerView diary={this} programs={this.programs}/>
 					</Tab>
 
-					{/*
-					<Tab eventKey="schedule" title="Schedule">
-
-					</Tab>*/}
 				</Tabs>
 			)
 	}
