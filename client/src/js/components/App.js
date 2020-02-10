@@ -122,6 +122,17 @@ class ProgramView extends React.Component {
 	constructor(props) {
 		super(props)
 		this.makeActive = this.makeActive.bind(this)
+		this.save = this.save.bind(this)
+		this.saveDialog = "Save"
+	}
+
+	save () {
+		const identifier = this.props.program.name
+		const load = JSON.stringify(this.props.program)
+		fetch('http://localhost:3000/API/save/${identifier}/${load}')
+			.then(res=>res.text())
+			.then(res => this.setState({apiResponse: res})) // TODO: check for actual success
+		this.saveDialog = "Saved"
 	}
 
 	makeActive () {
@@ -139,6 +150,7 @@ class ProgramView extends React.Component {
 				{program.days.map(((x)=><ListGroup.Item key={x.label}><DayView diary_mode={this.props.diary_mode} day={x}/></ListGroup.Item>))}
 				</ListGroup>
 				{!this.props.diary_mode && <Button onClick={this.makeActive}>Make Active</Button>}
+				{!this.props.diary_mode && <Button onClick={this.save}>{this.saveDialog}</Button>}
 			</div>
 		)
 

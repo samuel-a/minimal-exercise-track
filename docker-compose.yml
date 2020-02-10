@@ -1,5 +1,22 @@
 version: '3'
 services:
+    pg_db:
+        image: postgres
+        ports:
+            - "5432:5432"
+        healthcheck:
+            test: ["CMD", "curl", "-f", "http://localhost:5432"]
+            interval: 30s
+            timeout: 10s
+            retries: 5
+
+        volumes:
+            - ./schema/:/docker-entrypoint-initdb.d
+        restart: always
+        environment:
+            POSTGRES_DB: db
+            POSTGRES_PASSWORD: pass 
+            POSTGRES_USER: user
     client:
         image: nginx
         volumes:
@@ -16,13 +33,5 @@ services:
             - pg_db
         depends_on:
             - pg_db
-    pg_db:
-        image: postgres
-        ports:
-            - "5432:5432"
-        restart: always
-        environment:
-            POSTGRES_DB: db
-            POSTGRES_PASSWORD: pass 
-            POSTGRES_USER: user
+        restart: on-failure
 
