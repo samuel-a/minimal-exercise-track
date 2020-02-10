@@ -1,5 +1,5 @@
 # docker+postgres+express+mobx+react-Gym Tracker
-This is a simple gym exercise tracking web-app with a dockerized postgres backend with an express REST API and a React+mobx frontend.
+This is a simple experimental limited scope exercise tracking web-app with a dockerized postgres backend with an express REST API and a React+mobx frontend.
 
 ## Stack
 - Docker
