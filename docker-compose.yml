@@ -18,7 +18,7 @@ services:
             POSTGRES_PASSWORD: pass 
             POSTGRES_USER: user
     client:
-        image: nginx
+        build: ./client/
         volumes:
             - ./client/dist/:/usr/share/nginx/html
         ports:

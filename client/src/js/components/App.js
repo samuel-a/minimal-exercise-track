@@ -58,9 +58,6 @@ class ProgramManagerView extends React.Component {
 
 	constructor (props) {
 		super(props)
-		this.handleChange = this.handleChange.bind(this)
-		this.handleSubmit = this.handleSubmit.bind(this)
-		this.handleClick = this.handleClick.bind(this)
 	}
 
 	render () {
@@ -73,7 +70,8 @@ class ProgramManagerView extends React.Component {
 							<Form.Control placeholder="Enter Program Name" onChange={this.handleChange} type="text"/>
 						</Form.Group>
 						<Form.Group as={Col} controlId="formGroupCreate">
-							<Button onClick={this.handleClick}>Create Program</Button>
+							<Button onClick={this.handleAdd}>Create Program</Button>
+							<Button onClick={this.handleLoad}>Load Program</Button>
 						</Form.Group>
 					</Form.Row>
 				</Form>
@@ -85,20 +83,31 @@ class ProgramManagerView extends React.Component {
 			)		
 	}
 
-	handleChange(e) {
-
+	handleChange = (e) => {
 		this.newProgramName = e.currentTarget.value
 		//console.log(this.newProgramName)
 	}
 
-	handleSubmit(e) {
+	handleSubmit = (e) => {
 		const form = event.currentTarget
 		const value = form.value
 		this.programs.push(new ProgramStore(this.newProgramName))
 	}
 
-	handleClick() {
+	handleAdd = (e) => {
 		this.programs.push(new ProgramStore(this.newProgramName))
+	}
+
+	handleLoad = (e) => {
+		fetch('http://localhost:3000/API/load', 
+			{
+				method: 'POST',
+				body: {
+					identifier: this.newProgramName,
+					}
+			})
+			.then(res=>res.text())
+			.then(res => this.setState({apiResponse: res})) // TODO: check for actual success
 	}
 }
 
@@ -121,21 +130,25 @@ class ProgramView extends React.Component {
 	
 	constructor(props) {
 		super(props)
-		this.makeActive = this.makeActive.bind(this)
-		this.save = this.save.bind(this)
 		this.saveDialog = "Save"
 	}
 
-	save () {
+	handleSave= (e) => {
 		const identifier = this.props.program.name
 		const load = JSON.stringify(this.props.program)
-		fetch('http://localhost:3000/API/save/${identifier}/${load}')
+		fetch('http://localhost:3000/API/save', 
+			{
+				method: 'POST',
+				body: {
+					identifier: identifier,
+					load: load}
+			})
 			.then(res=>res.text())
 			.then(res => this.setState({apiResponse: res})) // TODO: check for actual success
 		this.saveDialog = "Saved"
 	}
 
-	makeActive () {
+	makeActive= (e)=> {
 		this.props.diary.active_program = this.props.program
     	this.props.diary.program_active = true
 	}
@@ -150,7 +163,7 @@ class ProgramView extends React.Component {
 				{program.days.map(((x)=><ListGroup.Item key={x.label}><DayView diary_mode={this.props.diary_mode} day={x}/></ListGroup.Item>))}
 				</ListGroup>
 				{!this.props.diary_mode && <Button onClick={this.makeActive}>Make Active</Button>}
-				{!this.props.diary_mode && <Button onClick={this.save}>{this.saveDialog}</Button>}
+				{!this.props.diary_mode && <Button onClick={this.handleSave}>{this.saveDialog}</Button>}
 			</div>
 		)
 
