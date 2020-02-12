@@ -10,17 +10,7 @@ This is a simple experimental limited scope exercise tracking web-app with a doc
 - Node
 
 ## Executing
-either run the `run.sh` file or run
-	npm install --prefix ./client && npm run dist --prefix ./client/ && docker-compose build && docker-compose run
-
-note: the client content must at the moment be manually updated by running `npm run dist`
-
-the client side interface can be accessed at `localhost:8080`
-## TODO :
-- load and save programs in the manage tab
-- Automate client building through a Dockerfile
-- Remove hardcoding for API access from client/src/.../App.js 
-- add tests
+The program can be executed in it's totality with `docker-compose up`, the client side interface can then be accessed at `localhost:8080`.
 
 
 ***
