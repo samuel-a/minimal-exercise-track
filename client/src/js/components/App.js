@@ -55,6 +55,8 @@ class DiaryView extends React.Component {
 class ProgramManagerView extends React.Component {
 	@observable programs = []
 	@observable newProgramName = "Unnamed Program"
+	@observable loadedProgramName = "No Load"
+	@observable loadedProgram = {}
 
 	constructor (props) {
 		super(props)
@@ -99,15 +101,14 @@ class ProgramManagerView extends React.Component {
 	}
 
 	handleLoad = (e) => {
-		fetch('http://localhost:3000/API/load', 
-			{
-				method: 'POST',
-				body: {
-					identifier: this.newProgramName,
-					}
-			})
-			.then(res=>res.text())
-			.then(res => this.setState({apiResponse: res})) // TODO: check for actual success
+		let program = this.newProgramName
+		fetch(`http://localhost:3000/API/load/${program}`)
+			.then((res)=>{res.text()})
+			.then((res) => {
+				this.loadedProgramName = program
+				this.loadedProgram = res
+				console.log(this.loadedProgram)
+			}) // TODO: check for actual success
 	}
 }
 
@@ -134,14 +135,12 @@ class ProgramView extends React.Component {
 	}
 
 	handleSave= (e) => {
-		const identifier = this.props.program.name
-		const load = JSON.stringify(this.props.program)
+		let load = JSON.stringify({identifier: this.props.program.label, load: this.props.program})//JSON.stringify(this.props.program)
+		console.log(load)
 		fetch('http://localhost:3000/API/save', 
 			{
 				method: 'POST',
-				body: {
-					identifier: identifier,
-					load: load}
+				body: load 
 			})
 			.then(res=>res.text())
 			.then(res => this.setState({apiResponse: res})) // TODO: check for actual success

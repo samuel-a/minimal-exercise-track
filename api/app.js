@@ -7,7 +7,7 @@ cors = require('cors');
 indexRouter = require('./routes/index');
 APIRouter = require('./routes/API')
 app = express();
-bodyParser = require('body-parser')
+//bodyParser = require('body-parser')
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -19,8 +19,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({extended: false}))
 app.use('/', indexRouter);
 app.use('/API', APIRouter);
 // catch 404 and forward to error handler
