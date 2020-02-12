@@ -102,13 +102,29 @@ class ProgramManagerView extends React.Component {
 
 	handleLoad = (e) => {
 		let program = this.newProgramName
-		fetch(`http://localhost:3000/API/load/${program}`)
-			.then((res)=>{res.text()})
-			.then((res) => {
+		fetch(`http://localhost:3000/API/load/${program}`, {
+			headers: {
+				'Accept':'application/json',
+				'Content-Type':'application/json'
+			}
+		})
+			.then((res)=>{
+				if(!res.ok) {
+					throw new Error('Network response was not ok')
+				}
+				return res.json()
+			})
+			.then((_json) => {
 				this.loadedProgramName = program
-				this.loadedProgram = res
+				this.loadedProgram = JSON.parse(JSON.stringify(_json))
 				console.log(this.loadedProgram)
-			}) // TODO: check for actual success
+				let newProgram = new ProgramStore(program)
+				
+
+			})
+			.catch( (e) => {
+				console.error(`A load fetch failed with error: ${e}`)
+			} )// TODO: check for actual success
 	}
 }
 
@@ -140,6 +156,10 @@ class ProgramView extends React.Component {
 		fetch('http://localhost:3000/API/save', 
 			{
 				method: 'POST',
+					headers: {
+						'Accept':'application/json',
+						'Content-Type': 'application/json'
+					},
 				body: load 
 			})
 			.then(res=>res.text())
