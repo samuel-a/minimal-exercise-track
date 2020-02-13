@@ -1,11 +1,12 @@
-/node_modules/
-/api/node_modules/
-/client/node_modules/
-/client/dist/
+node_modules/
+api/node_modules/
+client/node_modules/
+client/dist/
 .vscode
-/client/.vscode
+client/.vscode
 *~
 *.swp
 *.swo
 *.log
 *.env
+.eslintrc.json

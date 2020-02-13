@@ -12,6 +12,7 @@ import InputGroup from 'react-bootstrap/InputGroup'
 
 
 // Top level view for the application, contains tab controls as well as ProgramManagers
+
 @observer
 class DiaryView extends React.Component {
 
