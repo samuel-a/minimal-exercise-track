@@ -14,4 +14,4 @@ The program can be executed in it's totality with `docker-compose up`, the clien
 
 
 ***
-* Samuel Askeli Feb 2020 *
+Samuel Askeli Feb 2020 
