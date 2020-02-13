@@ -4,9 +4,9 @@ client/node_modules/
 client/dist/
 .vscode
 client/.vscode
-*~
-./**/*.swp
-./**/*.swo
-./**/*.log
-./**/*.env
-./**/*.eslintrc.json
+**/*~
+**/*.swp
+**/*.swo
+**/*.log
+**/*.env
+**/*.eslintrc.json
