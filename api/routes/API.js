@@ -1,6 +1,5 @@
 router = require('express').Router()
 pgp = require('pg-promise')(/* options */)
-require('dotenv').config()
 
 db = pgp(process.env.DATABASE_URL)
 
@@ -9,7 +8,7 @@ router.get("/", function(req, res, next) {
 })
 
 router.post("/save", function(req, res) {
-	db.none('INSERT INTO exercise (name, load) VALUES($1, $2)', [req.body.label, req.body])
+	db.none('INSERT INTO exercise (name, load) VALUES($1, $2) ON CONFLICT (name) DO UPDATE SET load = EXCLUDED.load;', [req.body.label, req.body])
 	.then(()=>{res.send("Successful save.")})
 	.catch((e)=>{console.log('SAVE ERROR', e)})
 })

@@ -7,10 +7,9 @@ services:
             interval: 30s
             timeout: 10s
             retries: 5
-
         volumes:
             - ./schema/:/docker-entrypoint-initdb.d
-        restart: always
+        restart: unless-stopped 
         environment:
             POSTGRES_DB: db
             POSTGRES_PASSWORD: pass 

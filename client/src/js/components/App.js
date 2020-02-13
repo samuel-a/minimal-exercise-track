@@ -356,7 +356,7 @@ class ExerciseView extends React.Component {
 const App = () => {
 		return(
      <div>
-		<DiaryView date={(new Date()).toLocaleDateString('fi-FI')}/>
+		<DiaryView date={(new Date()).toDateString()}/>
      </div>
    )
 }

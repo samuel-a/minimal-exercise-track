@@ -1,4 +1,4 @@
 CREATE TABLE exercise (
-	name TEXT,
+	name TEXT PRIMARY KEY,
 	load json
 );
