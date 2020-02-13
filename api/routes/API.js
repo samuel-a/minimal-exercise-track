@@ -18,12 +18,9 @@ router.get("/load/:identifier", function(req, res, next) {
 	let program_name =  req.params.identifier
 	db.one('SELECT load FROM exercise WHERE name = $1', [program_name])
 	.then((data) => {
-		console.log('typeof: ', typeof(data.load))
-		console.log('log: ', data)
-		console.log('stringify: ', JSON.stringify(data.load))
-	res.json(data)
+		res.json(data)
 	})
-    .catch((e) => {console.log('LOAD ERROR: ', e)})// error
+    .catch((e) => { console.log('LOAD ERROR: ', e) })// error
 })
 
 module.exports = router;

@@ -10,6 +10,8 @@ import Col from 'react-bootstrap/Col'
 import InputGroup from 'react-bootstrap/InputGroup'
 
 
+
+// Top level view for the application, contains tab controls as well as ProgramManagers
 @observer
 class DiaryView extends React.Component {
 
@@ -51,6 +53,7 @@ class DiaryView extends React.Component {
 	}
 }
 
+// A view for all the existing programs, contains programs, contained in a Diary
 @observer
 class ProgramManagerView extends React.Component {
 	@observable programs = []
@@ -87,7 +90,6 @@ class ProgramManagerView extends React.Component {
 
 	handleChange = (e) => {
 		this.newProgramName = e.currentTarget.value
-		//console.log(this.newProgramName)
 	}
 
 	handleSubmit = (e) => {
@@ -116,10 +118,8 @@ class ProgramManagerView extends React.Component {
 				return res.json()
 			})
 			.then((_json) => {
-				console.log('_json is of type: ', typeof(_json))
 				this.loadedProgramName = program
 				this.loadedProgram = _json.load
-				//console.log('_json ', JSON.parse(this.loadedProgram))
 				let newProgram = new ProgramStore(this.loadedProgramName)
 				let days = this.loadedProgram.days
 				
@@ -170,12 +170,14 @@ class ProgramStore {
 
 }
 
+// A view for a single program, holds days, is contained in a ProgramManager
 @observer
 class ProgramView extends React.Component {
 	
+	@observable saveDialog = "Save"
+
 	constructor(props) {
 		super(props)
-		this.saveDialog = "Save"
 	}
 
 	handleSave= (e) => {
@@ -189,12 +191,21 @@ class ProgramView extends React.Component {
 					},
 				body: JSON.stringify(load) 
 			})
-			.then(res=>res.text())
+			.then(res=>{
+				if (!res.ok) {
+					throw new Error('Network response was not OK')
+					this.saveDialog = "Save Failed"
+				}
+				return res.text()
+			})
 			.then(res => {
 				this.setState({apiResponse: res})
-				res.ok ? this.saveDialog = "Saved" : this.saveDialog = "Save failed";
+				this.saveDialog = "Saved"
 			})
-		}
+			.catch( (e) => {
+				console.error(`A save POST failed with error: ${e}`)
+		})
+	}
 
 	makeActive = (e)=> {
 		this.props.diary.active_program = this.props.program
@@ -239,7 +250,7 @@ class DayStore {
 		this.label = label
 	}
 
-	handleNameChange = (e)=> {
+	handleNameChange = (e) => {
 		const form = e.currentTarget
 		const value = form.value
 		this.candidateName = value
@@ -248,7 +259,6 @@ class DayStore {
 	handleSetChange = (e) => {
 		const form = e.currentTarget
 		const value = form.value
-		console.log(value)
 		this.candidateSets = value
 	}
 
@@ -259,12 +269,13 @@ class DayStore {
 	}
 
 	addExercise = (e) => {
-	this.xrcs.push(new ExerciseStore(this.candidateName, this.candidateSets, this.candidateReps))
+		this.xrcs.push(new ExerciseStore(this.candidateName, this.candidateSets, this.candidateReps))
 	}
 
 
 }
 
+// A view for a 'day' or 'division' is contained in a program, contains exercises
 @observer
 class DayView extends React.Component {
 	constructor(props) {
@@ -331,7 +342,7 @@ class ExerciseView extends React.Component {
 	}
 
 	render () {
-		const xrc = this.props.xrc;
+		const xrc = this.props.xrc
 		return (
 			<InputGroup className="mb-1">
 				<InputGroup.Text>{xrc.name} {xrc.sets}x{xrc.reps}</InputGroup.Text>
@@ -340,10 +351,8 @@ class ExerciseView extends React.Component {
 				</InputGroup.Append>
 			</InputGroup>
 		)	
+	}
 }
-}
-
-
 
 const App = () => {
 		return(
@@ -352,4 +361,4 @@ const App = () => {
      </div>
    )
 }
-export default App;
+export default App
