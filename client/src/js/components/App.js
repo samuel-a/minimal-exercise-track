@@ -7,7 +7,7 @@ import Tab from 'react-bootstrap/Tab'
 import Form from 'react-bootstrap/Form'
 import ListGroup from 'react-bootstrap/ListGroup'
 import Col from 'react-bootstrap/Col'
-
+import InputGroup from 'react-bootstrap/InputGroup'
 
 
 @observer
@@ -79,7 +79,7 @@ class ProgramManagerView extends React.Component {
 				</Form>
 			</div>
 			<ListGroup>
-				{this.programs.map(((x)=><ListGroup.Item key={x.label}>{<ProgramView diary={this.props.diary} program={x}/>}</ListGroup.Item>))}
+				{this.programs.map(((x)=><ListGroup.Item key={x.label}>{<ProgramView diary={this.props.diary} removeProgram={this.removeProgram} program={x}/>}</ListGroup.Item>))}
 			</ListGroup>
 			</div>
 			)		
@@ -137,12 +137,18 @@ class ProgramManagerView extends React.Component {
 			})
 			.catch( (e) => {
 				console.error(`A load fetch failed with error: ${e}`)
-			} )// TODO: check for actual success
+			} )
+	}
+
+
+	removeProgram = (prog) => {
+		let idx = this.programs.indexOf(prog)
+		this.programs.splice(idx, 1)
 	}
 }
 
 class ProgramStore {
-	@observable days = [new DayStore('A')]
+	@observable days = []
 	@observable label = "Unnamed Program"
 
 	constructor(label) {
@@ -154,7 +160,7 @@ class ProgramStore {
 		this.resetLabels()
 	}
 
-	resetLabels=()=>{
+	resetLabels = () =>{
 		let charCode = 65
 		this.days.forEach((day, index)=> {
 			day.label=String.fromCharCode(charCode)
@@ -174,7 +180,6 @@ class ProgramView extends React.Component {
 
 	handleSave= (e) => {
 		let load = this.props.program
-		console.log(load)
 		fetch('http://localhost:3000/API/save', 
 			{
 				method: 'POST',
@@ -185,13 +190,23 @@ class ProgramView extends React.Component {
 				body: JSON.stringify(load) 
 			})
 			.then(res=>res.text())
-			.then(res => this.setState({apiResponse: res})) // TODO: check for actual success
-		this.saveDialog = "Saved"
-	}
+			.then(res => {
+				this.setState({apiResponse: res})
+				res.ok ? this.saveDialog = "Saved" : this.saveDialog = "Save failed";
+			})
+		}
 
-	makeActive= (e)=> {
+	makeActive = (e)=> {
 		this.props.diary.active_program = this.props.program
     	this.props.diary.program_active = true
+	}
+
+	handleRemove = () => {
+		this.props.removeProgram(this)
+	}
+
+	removeDivision = (division) => {
+		this.props.program.days.splice(this.props.program.days.indexOf(division), 1)
 	}
 
 	render () {
@@ -201,10 +216,11 @@ class ProgramView extends React.Component {
 				<h2>{program.label}</h2>
 				{!this.props.diary_mode && <Button onClick={program.addDay}>Add division</Button>}
 				<ListGroup>
-				{program.days.map(((x)=><ListGroup.Item key={x.label}><DayView diary_mode={this.props.diary_mode} day={x}/></ListGroup.Item>))}
+				{program.days.map(((x)=><ListGroup.Item key={x.label}><DayView removeDivision={this.removeDivision} diary_mode={this.props.diary_mode} day={x}/></ListGroup.Item>))}
 				</ListGroup>
 				{!this.props.diary_mode && <Button onClick={this.makeActive}>Make Active</Button>}
 				{!this.props.diary_mode && <Button onClick={this.handleSave}>{this.saveDialog}</Button>}
+				{!this.props.diary_mode && <Button onClick={this.handleRemove}>Remove</Button>}
 			</div>
 		)
 
@@ -251,6 +267,17 @@ class DayStore {
 
 @observer
 class DayView extends React.Component {
+	constructor(props) {
+		super(props)
+	}
+
+	removeDivision = () => {
+		this.props.removeDivision(this)
+	}
+
+	removeExercise = (xrc) => {
+		this.props.day.xrcs.splice(this.props.day.xrcs.indexOf(xrc), 1)
+	}
 	render () {
 		return (
 			<div id="day-view"> 
@@ -268,11 +295,12 @@ class DayView extends React.Component {
 						</Form.Group>
 						<Form.Group as={Col} controlId="formAddExercise">
 							<Button onClick={this.props.day.addExercise}>Add Exercise</Button>
+							<Button onClick={this.removeDivision}>Remove Division</Button>
 						</Form.Group>
 					</Form.Row>}
 				</Form>
 				<ListGroup>
-					{this.props.day.xrcs.map(((x)=><ListGroup.Item key={x.name}><ExerciseView xrc={x}/></ListGroup.Item>))}
+					{this.props.day.xrcs.map(((x)=><ListGroup.Item key={x.name}><ExerciseView removeExercise={this.removeExercise} xrc={x}/></ListGroup.Item>))}
 				</ListGroup>
 			</div>
 		)
@@ -294,10 +322,23 @@ class ExerciseStore {
 // a view for a single exercise
 @observer
 class ExerciseView extends React.Component {
+	constructor(props) {
+		super(props)
+	}
+
+	removeExercise = () => {
+		this.props.removeExercise(this)
+	}
+
 	render () {
 		const xrc = this.props.xrc;
 		return (
-	<p>{xrc.name} {xrc.sets}x{xrc.reps}</p>
+			<InputGroup className="mb-1">
+				<InputGroup.Text>{xrc.name} {xrc.sets}x{xrc.reps}</InputGroup.Text>
+				<InputGroup.Append>
+					<Button onClick={this.removeExercise}>Remove Exercise</Button>
+				</InputGroup.Append>
+			</InputGroup>
 		)	
 }
 }

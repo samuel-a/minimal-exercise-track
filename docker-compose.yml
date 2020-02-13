@@ -19,8 +19,6 @@ services:
             POSTGRES_USER: user
     client:
         build: ./client/
-        volumes:
-            - ./client/dist/:/usr/share/nginx/html
         ports:
             - "8080:80"
     api:
