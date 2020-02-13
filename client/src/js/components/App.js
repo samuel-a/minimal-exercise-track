@@ -23,7 +23,7 @@ class DiaryView extends React.Component {
 	}
 
 	callAPI(){
-		fetch('http://localhost:3000/API')
+		fetch(`http://${window.location.hostname}:3000/API`)
 			.then(res=>res.text())
 			.then(res => this.setState({apiResponse: res}))
 	}
@@ -96,7 +96,6 @@ class ProgramManagerView extends React.Component {
 		const form = event.currentTarget
 		const value = form.value
 		this.programs.push(new ProgramStore(this.newProgramName))
-		//this.programs.forEach((prog, idx => {prog.resetLabels()}))
 	}
 
 	handleAdd = (e) => {
@@ -105,7 +104,7 @@ class ProgramManagerView extends React.Component {
 
 	handleLoad = (e) => {
 		let program = this.newProgramName
-		fetch(`http://localhost:3000/API/load/${program}`, {
+		fetch(`http://${window.location.hostname}:3000/API/load/${program}`, {
 			headers: {
 				'Accept':'application/json',
 				'Content-Type':'application/json'
@@ -182,7 +181,7 @@ class ProgramView extends React.Component {
 
 	handleSave= (e) => {
 		let load = this.props.program
-		fetch('http://localhost:3000/API/save', 
+		fetch(`http://${window.location.hostname}:3000/API/save`, 
 			{
 				method: 'POST',
 					headers: {

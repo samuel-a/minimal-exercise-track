@@ -1,5 +1,11 @@
 /node_modules/
 /api/node_modules/
 /client/node_modules/
-/client/dist/*
-/client/*.log
+/client/dist/
+.vscode
+/client/.vscode
+*~
+*.swp
+*.swo
+*.log
+*.env

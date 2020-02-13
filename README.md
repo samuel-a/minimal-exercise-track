@@ -10,7 +10,7 @@ This is a simple experimental limited scope exercise tracking web-app with a doc
 - Node
 
 ## Executing
-The program can be executed in it's totality with `docker-compose up`, the client side interface can then be accessed at `localhost:8080`.
+The program can be executed in it's totality with `docker-compose up`, the client side interface can then be accessed at port `8080`.
 
 
 ***
