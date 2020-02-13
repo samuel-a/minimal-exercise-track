@@ -2,8 +2,10 @@
 **/dist
 **/.vscode
 **/*~
+**/.*.swp
 **/*.swp
 **/*.swo
+**/.*.swo
 **/*.log
 **/.env
 **/.eslintrc.json
