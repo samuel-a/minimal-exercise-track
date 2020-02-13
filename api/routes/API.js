@@ -9,19 +9,19 @@ router.get("/", function(req, res, next) {
 })
 
 router.post("/save", function(req, res) {
-	let program_name = req.body.identifier
-	let program_string =req.body.load
-	db.none('INSERT INTO exercise (name, load) VALUES(${name}, ${program})', {name:program_name, program:program_string})
+	db.none('INSERT INTO exercise (name, load) VALUES($1, $2)', [req.body.label, req.body])
 	.then(()=>{res.send("Successful save.")})
 	.catch((e)=>{console.log('SAVE ERROR', e)})
 })
 
 router.get("/load/:identifier", function(req, res, next) {
 	let program_name =  req.params.identifier
-	console.log(program_name)
-	db.any('SELECT load FROM exercise WHERE name = $1', [program_name])
+	db.one('SELECT load FROM exercise WHERE name = $1', [program_name])
 	.then((data) => {
-	res.json({status: 'found', program: data})
+		console.log('typeof: ', typeof(data.load))
+		console.log('log: ', data)
+		console.log('stringify: ', JSON.stringify(data.load))
+	res.json(data)
 	})
     .catch((e) => {console.log('LOAD ERROR: ', e)})// error
 })

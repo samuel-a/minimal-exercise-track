@@ -94,6 +94,7 @@ class ProgramManagerView extends React.Component {
 		const form = event.currentTarget
 		const value = form.value
 		this.programs.push(new ProgramStore(this.newProgramName))
+		//this.programs.forEach((prog, idx => {prog.resetLabels()}))
 	}
 
 	handleAdd = (e) => {
@@ -115,12 +116,24 @@ class ProgramManagerView extends React.Component {
 				return res.json()
 			})
 			.then((_json) => {
+				console.log('_json is of type: ', typeof(_json))
 				this.loadedProgramName = program
-				this.loadedProgram = JSON.parse(JSON.stringify(_json))
-				console.log(this.loadedProgram)
-				let newProgram = new ProgramStore(program)
+				this.loadedProgram = _json.load
+				//console.log('_json ', JSON.parse(this.loadedProgram))
+				let newProgram = new ProgramStore(this.loadedProgramName)
+				let days = this.loadedProgram.days
 				
+				days.forEach((day, index)=> {
+					let tempDay = new DayStore()
+					tempDay.label = day.label
+					day.xrcs.forEach((xrc, index) => {
+						tempDay.xrcs.push(new ExerciseStore(xrc.name, xrc.sets, xrc.reps))
+					})
 
+					newProgram.days.push(tempDay)					
+				})
+				newProgram.resetLabels()
+				this.programs.push(newProgram)
 			})
 			.catch( (e) => {
 				console.error(`A load fetch failed with error: ${e}`)
@@ -131,13 +144,22 @@ class ProgramManagerView extends React.Component {
 class ProgramStore {
 	@observable days = [new DayStore('A')]
 	@observable label = "Unnamed Program"
+
 	constructor(label) {
-		this.addDay = this.addDay.bind(this)
 		this.label = label
 	}
 
-	addDay() {
+	addDay = () => {
 		this.days.push(new DayStore('A'))
+		this.resetLabels()
+	}
+
+	resetLabels=()=>{
+		let charCode = 65
+		this.days.forEach((day, index)=> {
+			day.label=String.fromCharCode(charCode)
+			charCode++
+		})
 	}
 
 }
@@ -151,7 +173,7 @@ class ProgramView extends React.Component {
 	}
 
 	handleSave= (e) => {
-		let load = JSON.stringify({identifier: this.props.program.label, load: this.props.program})//JSON.stringify(this.props.program)
+		let load = this.props.program
 		console.log(load)
 		fetch('http://localhost:3000/API/save', 
 			{
@@ -160,7 +182,7 @@ class ProgramView extends React.Component {
 						'Accept':'application/json',
 						'Content-Type': 'application/json'
 					},
-				body: load 
+				body: JSON.stringify(load) 
 			})
 			.then(res=>res.text())
 			.then(res => this.setState({apiResponse: res})) // TODO: check for actual success
@@ -197,34 +219,30 @@ class DayStore {
 	@observable candidateSets = -1
 	@observable candidateReps = -1
 
-	constructor (label='Day Label') {
-		this.handleNameChange = this.handleNameChange.bind(this)
-		this.handleSetChange = this.handleSetChange.bind(this)
-		this.handleRepChange = this.handleRepChange.bind(this)
-		this.addExercise = this.addExercise.bind(this)
+	constructor(label='Day Label') {
 		this.label = label
 	}
 
-	handleNameChange(e) {
+	handleNameChange = (e)=> {
 		const form = e.currentTarget
 		const value = form.value
 		this.candidateName = value
 	}
 
-	handleSetChange(e) {
+	handleSetChange = (e) => {
 		const form = e.currentTarget
 		const value = form.value
 		console.log(value)
 		this.candidateSets = value
 	}
 
-	handleRepChange(e) {
+	handleRepChange = (e)=> {
 		const form = e.currentTarget
 		const value = form.value
 		this.candidateReps = value	
 	}
 
-	addExercise(e) {
+	addExercise = (e) => {
 	this.xrcs.push(new ExerciseStore(this.candidateName, this.candidateSets, this.candidateReps))
 	}
 
@@ -265,13 +283,11 @@ class ExerciseStore {
 	@observable name = "Default Exercise Name"
 	@observable sets = 0
 	@observable reps = 0
-	@observable mass = 0
 
-	constructor(name, sets, reps, mass=0){
+	constructor(name, sets, reps){
 		this.name = name
 		this.sets = sets
 		this.reps = reps
-		this.mass = mass
 	}
 }
 
